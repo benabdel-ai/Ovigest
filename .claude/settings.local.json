@@ -1,0 +1,9 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls -la /c/Users/Bentaleb/Desktop/troupeau_flutter/android/app/src/main/res/mipmap-*/ic_launcher.png)",
+      "Bash(git init:*)",
+      "Bash(git add:*)"
+    ]
+  }
+}
