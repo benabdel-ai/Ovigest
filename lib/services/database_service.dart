@@ -23,39 +23,84 @@ class DatabaseService {
 
     return openDatabase(
       path,
-      version: 1,
+      version: 2,
       onCreate: (database, version) async {
-        await database.execute('''
-          CREATE TABLE mouvements (
-            id TEXT PRIMARY KEY,
-            type TEXT NOT NULL,
-            qte INTEGER NOT NULL,
-            date TEXT NOT NULL,
-            remarque TEXT DEFAULT ''
-          )
-        ''');
-
-        await database.execute('''
-          CREATE TABLE depenses (
-            id TEXT PRIMARY KEY,
-            montant REAL NOT NULL,
-            date TEXT NOT NULL,
-            categorie TEXT NOT NULL,
-            remarque TEXT DEFAULT ''
-          )
-        ''');
-
-        await database.execute('''
-          CREATE TABLE revenus (
-            id TEXT PRIMARY KEY,
-            montant REAL NOT NULL,
-            date TEXT NOT NULL,
-            categorie TEXT NOT NULL,
-            remarque TEXT DEFAULT ''
-          )
-        ''');
+        await _createTables(database);
+      },
+      onUpgrade: (database, oldVersion, newVersion) async {
+        if (oldVersion < 2) {
+          await database.execute(
+              "ALTER TABLE mouvements ADD COLUMN lot TEXT DEFAULT 'abdel_fidaoui'");
+          await database.execute(
+              "ALTER TABLE depenses ADD COLUMN lot TEXT DEFAULT 'abdel_fidaoui'");
+          await database.execute(
+              "ALTER TABLE revenus ADD COLUMN lot TEXT DEFAULT 'abdel_fidaoui'");
+        }
       },
     );
+  }
+
+  Future<void> _createTables(Database database) async {
+    await database.execute('''
+      CREATE TABLE mouvements (
+        id TEXT PRIMARY KEY,
+        type TEXT NOT NULL,
+        qte INTEGER NOT NULL,
+        date TEXT NOT NULL,
+        remarque TEXT DEFAULT '',
+        lot TEXT DEFAULT 'abdel_fidaoui'
+      )
+    ''');
+
+    await database.execute('''
+      CREATE TABLE depenses (
+        id TEXT PRIMARY KEY,
+        montant REAL NOT NULL,
+        date TEXT NOT NULL,
+        categorie TEXT NOT NULL,
+        remarque TEXT DEFAULT '',
+        lot TEXT DEFAULT 'abdel_fidaoui'
+      )
+    ''');
+
+    await database.execute('''
+      CREATE TABLE revenus (
+        id TEXT PRIMARY KEY,
+        montant REAL NOT NULL,
+        date TEXT NOT NULL,
+        categorie TEXT NOT NULL,
+        remarque TEXT DEFAULT '',
+        lot TEXT DEFAULT 'abdel_fidaoui'
+      )
+    ''');
+  }
+
+  Future<bool> isEmpty() async {
+    final database = await db;
+    final count = Sqflite.firstIntValue(
+          await database.rawQuery('SELECT COUNT(*) FROM mouvements'),
+        ) ??
+        0;
+    return count == 0;
+  }
+
+  Future<void> insertAll({
+    required List<Mouvement> mouvements,
+    required List<Depense> depenses,
+    required List<Revenu> revenus,
+  }) async {
+    final database = await db;
+    final batch = database.batch();
+    for (final m in mouvements) {
+      batch.insert('mouvements', m.toMap(), conflictAlgorithm: ConflictAlgorithm.ignore);
+    }
+    for (final d in depenses) {
+      batch.insert('depenses', d.toMap(), conflictAlgorithm: ConflictAlgorithm.ignore);
+    }
+    for (final r in revenus) {
+      batch.insert('revenus', r.toMap(), conflictAlgorithm: ConflictAlgorithm.ignore);
+    }
+    await batch.commit(noResult: true);
   }
 
   Future<List<Mouvement>> getMouvements() async {

@@ -2,12 +2,58 @@ import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
 
+class LotInfo {
+  final String label;
+  final String emoji;
+  final String associe1;
+  final double part1;
+  final String associe2;
+  final double part2;
+
+  const LotInfo({
+    required this.label,
+    required this.emoji,
+    required this.associe1,
+    required this.part1,
+    required this.associe2,
+    required this.part2,
+  });
+}
+
+const Map<String, LotInfo> lots = {
+  'abdel_fidaoui': LotInfo(
+    label: 'Abdel + Fidaoui',
+    emoji: '🐑',
+    associe1: 'Abdel',
+    part1: 0.75,
+    associe2: 'Fidaoui',
+    part2: 0.25,
+  ),
+  'abdel_nouri': LotInfo(
+    label: 'Abdel + Nouri',
+    emoji: '🐏',
+    associe1: 'Abdel',
+    part1: 0.50,
+    associe2: 'Nouri',
+    part2: 0.50,
+  ),
+  'abdel_adil': LotInfo(
+    label: 'Abdel + Adil',
+    emoji: '🤝',
+    associe1: 'Abdel',
+    part1: 0.50,
+    associe2: 'Adil',
+    part2: 0.50,
+  ),
+};
+
 class Mouvement {
   final String id;
   final String type;
   final int qte;
   final DateTime date;
   final String remarque;
+  final String lot;
 
   Mouvement({
     String? id,
@@ -15,6 +61,7 @@ class Mouvement {
     required this.qte,
     required this.date,
     this.remarque = '',
+    this.lot = 'abdel_fidaoui',
   }) : id = id ?? _uuid.v4();
 
   Map<String, dynamic> toMap() => {
@@ -23,6 +70,7 @@ class Mouvement {
         'qte': qte,
         'date': date.toIso8601String().split('T').first,
         'remarque': remarque,
+        'lot': lot,
       };
 
   factory Mouvement.fromMap(Map<String, dynamic> map) => Mouvement(
@@ -31,6 +79,7 @@ class Mouvement {
         qte: map['qte'] as int,
         date: DateTime.parse(map['date'] as String),
         remarque: (map['remarque'] ?? '') as String,
+        lot: (map['lot'] ?? 'abdel_fidaoui') as String,
       );
 
   String get label => mvtLabels[type] ?? type;
@@ -97,6 +146,7 @@ class Depense {
   final DateTime date;
   final String categorie;
   final String remarque;
+  final String lot;
 
   Depense({
     String? id,
@@ -104,6 +154,7 @@ class Depense {
     required this.date,
     required this.categorie,
     this.remarque = '',
+    this.lot = 'abdel_fidaoui',
   }) : id = id ?? _uuid.v4();
 
   Map<String, dynamic> toMap() => {
@@ -112,6 +163,7 @@ class Depense {
         'date': date.toIso8601String().split('T').first,
         'categorie': categorie,
         'remarque': remarque,
+        'lot': lot,
       };
 
   factory Depense.fromMap(Map<String, dynamic> map) => Depense(
@@ -120,6 +172,7 @@ class Depense {
         date: DateTime.parse(map['date'] as String),
         categorie: (map['categorie'] ?? '') as String,
         remarque: (map['remarque'] ?? '') as String,
+        lot: (map['lot'] ?? 'abdel_fidaoui') as String,
       );
 }
 
@@ -129,6 +182,7 @@ class Revenu {
   final DateTime date;
   final String categorie;
   final String remarque;
+  final String lot;
 
   Revenu({
     String? id,
@@ -136,6 +190,7 @@ class Revenu {
     required this.date,
     required this.categorie,
     this.remarque = '',
+    this.lot = 'abdel_fidaoui',
   }) : id = id ?? _uuid.v4();
 
   Map<String, dynamic> toMap() => {
@@ -144,6 +199,7 @@ class Revenu {
         'date': date.toIso8601String().split('T').first,
         'categorie': categorie,
         'remarque': remarque,
+        'lot': lot,
       };
 
   factory Revenu.fromMap(Map<String, dynamic> map) => Revenu(
@@ -152,6 +208,7 @@ class Revenu {
         date: DateTime.parse(map['date'] as String),
         categorie: (map['categorie'] ?? '') as String,
         remarque: (map['remarque'] ?? '') as String,
+        lot: (map['lot'] ?? 'abdel_fidaoui') as String,
       );
 }
 
@@ -225,21 +282,20 @@ class Stock {
 
 const depCategories = <String>[
   'Alimentation',
+  "Main-d'œuvre",
   'Vétérinaire',
   'Transport',
   'Achat bétail',
-  "Main-d'œuvre",
   'Équipement',
-  'Eau / Électricité',
+  'Location',
   'Autre',
 ];
 
 const revCategories = <String>[
   'Vente brebis',
   'Vente bélier',
-  'Vente agneau mâle',
-  'Vente agneau femelle',
-  'Lait',
-  'Fumier',
+  'Vente agneau ♂',
+  'Vente agneau ♀',
+  'Vente lot Aïd',
   'Autre',
 ];

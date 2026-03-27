@@ -34,7 +34,7 @@ class TroupeauApp extends StatelessWidget {
     return ChangeNotifierProvider<AppProvider>(
       create: (_) => AppProvider()..init(),
       child: MaterialApp(
-        title: 'Troupeau Ovins',
+        title: 'Ma Ferme',
         debugShowCheckedModeBanner: false,
         theme: buildTheme(),
         home: const HomeScreen(),
@@ -59,6 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
     DepensesScreen(),
     RevenusScreen(),
     HistoriqueScreen(),
+    AssociesScreen(),
   ];
 
   static const List<String> _labels = <String>[
@@ -67,6 +68,7 @@ class _HomeScreenState extends State<HomeScreen> {
     'Dépenses',
     'Revenus',
     'Historique',
+    'Associés',
   ];
 
   static const List<IconData> _icons = <IconData>[
@@ -75,6 +77,7 @@ class _HomeScreenState extends State<HomeScreen> {
     Icons.trending_down_rounded,
     Icons.trending_up_rounded,
     Icons.history_rounded,
+    Icons.people_rounded,
   ];
 
   @override
@@ -105,7 +108,7 @@ class _HomeScreenState extends State<HomeScreen> {
               ),
               const SizedBox(height: 18),
               const Text(
-                'Troupeau Ovins',
+                'Ma Ferme',
                 style: TextStyle(
                   fontSize: 28,
                   fontWeight: FontWeight.w900,
@@ -166,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 Text(
-                  'Troupeau Ovins',
+                  'Ma Ferme',
                   style: TextStyle(
                     fontSize: 18,
                     fontWeight: FontWeight.w900,
@@ -174,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ),
                 Text(
-                  'Suivi simple du troupeau',
+                  'Abdel · Fidaoui · Nouri · Adil',
                   style: TextStyle(
                     fontSize: 11,
                     fontWeight: FontWeight.w800,

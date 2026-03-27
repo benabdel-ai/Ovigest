@@ -29,6 +29,7 @@ class _MvtFormState extends State<_MvtForm> {
   int _qte = 1;
   DateTime _date = DateTime.now();
   String _rem = '';
+  String _lot = 'abdel_fidaoui';
 
   final List<(String, String)> _types = const <(String, String)>[
     ('naissance_agf', '🍼 Naissance Agneau ♀'),
@@ -73,6 +74,18 @@ class _MvtFormState extends State<_MvtForm> {
                   .toList(),
               _type,
               (value) => setState(() => _type = value ?? _type),
+            ),
+            const SizedBox(height: 14),
+            _label('Lot / Associé'),
+            _dropdown<String>(
+              lots.entries
+                  .map((e) => DropdownMenuItem<String>(
+                        value: e.key,
+                        child: Text('${e.value.emoji} ${e.value.label}'),
+                      ))
+                  .toList(),
+              _lot,
+              (value) => setState(() => _lot = value ?? _lot),
             ),
             const SizedBox(height: 14),
             Row(
@@ -130,31 +143,17 @@ class _MvtFormState extends State<_MvtForm> {
   }
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
+    if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 
     await context.read<AppProvider>().addMouvement(
-          Mouvement(
-            type: _type,
-            qte: _qte,
-            date: _date,
-            remarque: _rem,
-          ),
+          Mouvement(type: _type, qte: _qte, date: _date, remarque: _rem, lot: _lot),
         );
 
-    if (!mounted) {
-      return;
-    }
-
+    if (!mounted) return;
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Mouvement enregistré'),
-        backgroundColor: AppColors.green2,
-      ),
+      const SnackBar(content: Text('Mouvement enregistré'), backgroundColor: AppColors.green2),
     );
   }
 }
@@ -181,6 +180,7 @@ class _DepFormState extends State<_DepForm> {
   DateTime _date = DateTime.now();
   String _categorie = depCategories.first;
   String _rem = '';
+  String _lot = 'abdel_fidaoui';
 
   @override
   Widget build(BuildContext context) {
@@ -202,13 +202,11 @@ class _DepFormState extends State<_DepForm> {
                         decoration: const InputDecoration(suffixText: 'MAD'),
                         validator: (value) {
                           final parsed = double.tryParse((value ?? '').replaceAll(',', '.'));
-                          if (parsed == null || parsed <= 0) {
-                            return 'Montant invalide';
-                          }
+                          if (parsed == null || parsed <= 0) return 'Montant invalide';
                           return null;
                         },
-                        onSaved: (value) => _montant =
-                            double.tryParse((value ?? '').replaceAll(',', '.')) ?? 0,
+                        onSaved: (value) =>
+                            _montant = double.tryParse((value ?? '').replaceAll(',', '.')) ?? 0,
                       ),
                     ],
                   ),
@@ -222,6 +220,18 @@ class _DepFormState extends State<_DepForm> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 14),
+            _label('Lot / Associé'),
+            _dropdown<String>(
+              lots.entries
+                  .map((e) => DropdownMenuItem<String>(
+                        value: e.key,
+                        child: Text('${e.value.emoji} ${e.value.label}'),
+                      ))
+                  .toList(),
+              _lot,
+              (value) => setState(() => _lot = value ?? _lot),
             ),
             const SizedBox(height: 14),
             _label('Catégorie'),
@@ -254,31 +264,17 @@ class _DepFormState extends State<_DepForm> {
   }
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
+    if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 
     await context.read<AppProvider>().addDepense(
-          Depense(
-            montant: _montant,
-            date: _date,
-            categorie: _categorie,
-            remarque: _rem,
-          ),
+          Depense(montant: _montant, date: _date, categorie: _categorie, remarque: _rem, lot: _lot),
         );
 
-    if (!mounted) {
-      return;
-    }
-
+    if (!mounted) return;
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Dépense enregistrée'),
-        backgroundColor: AppColors.green2,
-      ),
+      const SnackBar(content: Text('Dépense enregistrée'), backgroundColor: AppColors.green2),
     );
   }
 }
@@ -305,6 +301,7 @@ class _RevFormState extends State<_RevForm> {
   DateTime _date = DateTime.now();
   String _categorie = revCategories.first;
   String _rem = '';
+  String _lot = 'abdel_fidaoui';
 
   @override
   Widget build(BuildContext context) {
@@ -326,13 +323,11 @@ class _RevFormState extends State<_RevForm> {
                         decoration: const InputDecoration(suffixText: 'MAD'),
                         validator: (value) {
                           final parsed = double.tryParse((value ?? '').replaceAll(',', '.'));
-                          if (parsed == null || parsed <= 0) {
-                            return 'Montant invalide';
-                          }
+                          if (parsed == null || parsed <= 0) return 'Montant invalide';
                           return null;
                         },
-                        onSaved: (value) => _montant =
-                            double.tryParse((value ?? '').replaceAll(',', '.')) ?? 0,
+                        onSaved: (value) =>
+                            _montant = double.tryParse((value ?? '').replaceAll(',', '.')) ?? 0,
                       ),
                     ],
                   ),
@@ -346,6 +341,18 @@ class _RevFormState extends State<_RevForm> {
                   ),
                 ),
               ],
+            ),
+            const SizedBox(height: 14),
+            _label('Lot / Associé'),
+            _dropdown<String>(
+              lots.entries
+                  .map((e) => DropdownMenuItem<String>(
+                        value: e.key,
+                        child: Text('${e.value.emoji} ${e.value.label}'),
+                      ))
+                  .toList(),
+              _lot,
+              (value) => setState(() => _lot = value ?? _lot),
             ),
             const SizedBox(height: 14),
             _label('Catégorie'),
@@ -378,40 +385,23 @@ class _RevFormState extends State<_RevForm> {
   }
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) {
-      return;
-    }
-
+    if (!_formKey.currentState!.validate()) return;
     _formKey.currentState!.save();
 
     await context.read<AppProvider>().addRevenu(
-          Revenu(
-            montant: _montant,
-            date: _date,
-            categorie: _categorie,
-            remarque: _rem,
-          ),
+          Revenu(montant: _montant, date: _date, categorie: _categorie, remarque: _rem, lot: _lot),
         );
 
-    if (!mounted) {
-      return;
-    }
-
+    if (!mounted) return;
     Navigator.pop(context);
     ScaffoldMessenger.of(context).showSnackBar(
-      const SnackBar(
-        content: Text('Revenu enregistré'),
-        backgroundColor: AppColors.green2,
-      ),
+      const SnackBar(content: Text('Revenu enregistré'), backgroundColor: AppColors.green2),
     );
   }
 }
 
 class _Sheet extends StatelessWidget {
-  const _Sheet({
-    required this.title,
-    required this.child,
-  });
+  const _Sheet({required this.title, required this.child});
 
   final String title;
   final Widget child;
@@ -461,11 +451,7 @@ class _Sheet extends StatelessWidget {
 }
 
 class _DateField extends StatelessWidget {
-  const _DateField({
-    required this.label,
-    required this.value,
-    required this.onChanged,
-  });
+  const _DateField({required this.label, required this.value, required this.onChanged});
 
   final String label;
   final DateTime value;
@@ -483,11 +469,9 @@ class _DateField extends StatelessWidget {
               context: context,
               initialDate: value,
               firstDate: DateTime(2000),
-              lastDate: DateTime.now(),
+              lastDate: DateTime(2030),
             );
-            if (picked != null) {
-              onChanged(picked);
-            }
+            if (picked != null) onChanged(picked);
           },
           child: Container(
             width: double.infinity,
@@ -566,11 +550,7 @@ Widget _cancelBtn(BuildContext context) {
       onPressed: () => Navigator.pop(context),
       child: const Text(
         'Annuler',
-        style: TextStyle(
-          fontSize: 15,
-          fontWeight: FontWeight.w700,
-          color: AppColors.text3,
-        ),
+        style: TextStyle(fontSize: 15, fontWeight: FontWeight.w700, color: AppColors.text3),
       ),
     ),
   );
