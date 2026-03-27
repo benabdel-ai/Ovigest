@@ -92,7 +92,7 @@ ThemeData buildTheme() {
         fontSize: 20,
       ),
     ),
-    cardTheme: const CardTheme(
+    cardTheme: const CardThemeData(
       color: AppColors.card,
       elevation: 0,
       margin: EdgeInsets.zero,
