@@ -143,6 +143,30 @@ class AppProvider extends ChangeNotifier {
     });
   }
 
+  // ---- Finances par secteur ----
+  double totalDepensesBySecteur(String secteur) =>
+      depenses.where((d) => d.secteur == secteur).fold(0.0, (s, d) => s + d.montant);
+
+  double totalRevenusBySecteur(String secteur) =>
+      revenus.where((r) => r.secteur == secteur).fold(0.0, (s, r) => s + r.montant);
+
+  double bilanBySecteur(String secteur) =>
+      totalRevenusBySecteur(secteur) - totalDepensesBySecteur(secteur);
+
+  double depensesMoisBySecteur(DateTime month, String secteur) => depenses
+      .where((d) =>
+          d.secteur == secteur &&
+          d.date.year == month.year &&
+          d.date.month == month.month)
+      .fold(0.0, (s, d) => s + d.montant);
+
+  double revenusMoisBySecteur(DateTime month, String secteur) => revenus
+      .where((r) =>
+          r.secteur == secteur &&
+          r.date.year == month.year &&
+          r.date.month == month.month)
+      .fold(0.0, (s, r) => s + r.montant);
+
   // ---- Catégories ----
   Map<String, double> depensesByCategorie() {
     final result = <String, double>{};

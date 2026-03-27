@@ -23,7 +23,7 @@ class DatabaseService {
 
     return openDatabase(
       path,
-      version: 2,
+      version: 3,
       onCreate: (database, version) async {
         await _createTables(database);
       },
@@ -35,6 +35,12 @@ class DatabaseService {
               "ALTER TABLE depenses ADD COLUMN lot TEXT DEFAULT 'abdel_fidaoui'");
           await database.execute(
               "ALTER TABLE revenus ADD COLUMN lot TEXT DEFAULT 'abdel_fidaoui'");
+        }
+        if (oldVersion < 3) {
+          await database.execute(
+              "ALTER TABLE depenses ADD COLUMN secteur TEXT DEFAULT 'ovins'");
+          await database.execute(
+              "ALTER TABLE revenus ADD COLUMN secteur TEXT DEFAULT 'ovins'");
         }
       },
     );
@@ -59,7 +65,8 @@ class DatabaseService {
         date TEXT NOT NULL,
         categorie TEXT NOT NULL,
         remarque TEXT DEFAULT '',
-        lot TEXT DEFAULT 'abdel_fidaoui'
+        lot TEXT DEFAULT 'abdel_fidaoui',
+        secteur TEXT DEFAULT 'ovins'
       )
     ''');
 
@@ -70,7 +77,8 @@ class DatabaseService {
         date TEXT NOT NULL,
         categorie TEXT NOT NULL,
         remarque TEXT DEFAULT '',
-        lot TEXT DEFAULT 'abdel_fidaoui'
+        lot TEXT DEFAULT 'abdel_fidaoui',
+        secteur TEXT DEFAULT 'ovins'
       )
     ''');
   }

@@ -155,6 +155,60 @@ class DashboardScreen extends StatelessWidget {
             ),
           ),
 
+          // ── Par activité ──────────────────────────────────────────────────
+          AppCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: <Widget>[
+                const CardTitle('🌿 PAR ACTIVITÉ'),
+                ...secteurs.entries.map((entry) {
+                  final secteurKey = entry.key;
+                  final info = entry.value;
+                  final dep = provider.totalDepensesBySecteur(secteurKey);
+                  final rev = provider.totalRevenusBySecteur(secteurKey);
+                  final bilan = rev - dep;
+                  if (dep == 0 && rev == 0) return const SizedBox.shrink();
+                  return Container(
+                    margin: const EdgeInsets.only(bottom: 10),
+                    padding: const EdgeInsets.all(12),
+                    decoration: BoxDecoration(
+                      color: AppColors.cardSoft,
+                      borderRadius: BorderRadius.circular(16),
+                      border: Border.all(color: AppColors.borderSoft),
+                    ),
+                    child: Row(
+                      children: <Widget>[
+                        Text(info.emoji, style: const TextStyle(fontSize: 24)),
+                        const SizedBox(width: 10),
+                        Expanded(
+                          child: Text(info.label,
+                              style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w900, color: AppColors.text)),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: <Widget>[
+                            Text(
+                              '${bilan >= 0 ? '+' : '-'}${fmtMAD(bilan.abs())}',
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w900,
+                                color: bilan >= 0 ? AppColors.green2 : AppColors.red,
+                              ),
+                            ),
+                            Text(
+                              'Dep: ${fmtMAD(dep)}',
+                              style: const TextStyle(fontSize: 10, color: AppColors.text3, fontWeight: FontWeight.w700),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }),
+              ],
+            ),
+          ),
+
           // ── Par lot ───────────────────────────────────────────────────────
           AppCard(
             child: Column(
@@ -651,16 +705,16 @@ class DepensesScreen extends StatefulWidget {
 }
 
 class _DepensesScreenState extends State<DepensesScreen> {
-  String _selectedLot = 'all';
+  String _selectedSecteur = 'all';
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final now = DateTime.now();
 
-    final filtered = _selectedLot == 'all'
+    final filtered = _selectedSecteur == 'all'
         ? provider.depenses
-        : provider.depenses.where((d) => d.lot == _selectedLot).toList();
+        : provider.depenses.where((d) => d.secteur == _selectedSecteur).toList();
 
     final total = filtered.fold(0.0, (s, d) => s + d.montant);
     final mois = filtered
@@ -683,12 +737,12 @@ class _DepensesScreenState extends State<DepensesScreen> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: <Widget>[
-                _LotChip(label: 'Tous', value: 'all', selected: _selectedLot == 'all', onTap: () => setState(() => _selectedLot = 'all')),
-                ...lots.entries.map((e) => _LotChip(
+                _LotChip(label: 'Tous', value: 'all', selected: _selectedSecteur == 'all', onTap: () => setState(() => _selectedSecteur = 'all')),
+                ...secteurs.entries.map((e) => _LotChip(
                       label: '${e.value.emoji} ${e.value.label}',
                       value: e.key,
-                      selected: _selectedLot == e.key,
-                      onTap: () => setState(() => _selectedLot = e.key),
+                      selected: _selectedSecteur == e.key,
+                      onTap: () => setState(() => _selectedSecteur = e.key),
                     )),
               ],
             ),
@@ -726,9 +780,9 @@ class _DepensesScreenState extends State<DepensesScreen> {
                 else
                   ...filtered.map(
                     (d) => HistoryItem(
-                      emoji: '💸',
-                      title: '${lots[d.lot]?.emoji ?? ''} ${d.categorie}',
-                      subtitle: '${fmtDate(d.date)}${d.remarque.isNotEmpty ? ' · ${d.remarque}' : ''}',
+                      emoji: secteurs[d.secteur]?.emoji ?? '💸',
+                      title: d.categorie,
+                      subtitle: '${fmtDate(d.date)} · ${secteurs[d.secteur]?.label ?? d.secteur} · ${lots[d.lot]?.label ?? d.lot}${d.remarque.isNotEmpty ? ' · ${d.remarque}' : ''}',
                       value: '-${fmtMAD(d.montant)}',
                       valueColor: AppColors.red,
                       bgColor: AppColors.redBg,
@@ -755,16 +809,16 @@ class RevenusScreen extends StatefulWidget {
 }
 
 class _RevenusScreenState extends State<RevenusScreen> {
-  String _selectedLot = 'all';
+  String _selectedSecteur = 'all';
 
   @override
   Widget build(BuildContext context) {
     final provider = context.watch<AppProvider>();
     final now = DateTime.now();
 
-    final filtered = _selectedLot == 'all'
+    final filtered = _selectedSecteur == 'all'
         ? provider.revenus
-        : provider.revenus.where((r) => r.lot == _selectedLot).toList();
+        : provider.revenus.where((r) => r.secteur == _selectedSecteur).toList();
 
     final total = filtered.fold(0.0, (s, r) => s + r.montant);
     final mois = filtered
@@ -787,12 +841,12 @@ class _RevenusScreenState extends State<RevenusScreen> {
             scrollDirection: Axis.horizontal,
             child: Row(
               children: <Widget>[
-                _LotChip(label: 'Tous', value: 'all', selected: _selectedLot == 'all', onTap: () => setState(() => _selectedLot = 'all')),
-                ...lots.entries.map((e) => _LotChip(
+                _LotChip(label: 'Tous', value: 'all', selected: _selectedSecteur == 'all', onTap: () => setState(() => _selectedSecteur = 'all')),
+                ...secteurs.entries.map((e) => _LotChip(
                       label: '${e.value.emoji} ${e.value.label}',
                       value: e.key,
-                      selected: _selectedLot == e.key,
-                      onTap: () => setState(() => _selectedLot = e.key),
+                      selected: _selectedSecteur == e.key,
+                      onTap: () => setState(() => _selectedSecteur = e.key),
                     )),
               ],
             ),
@@ -830,9 +884,9 @@ class _RevenusScreenState extends State<RevenusScreen> {
                 else
                   ...filtered.map(
                     (r) => HistoryItem(
-                      emoji: '💰',
-                      title: '${lots[r.lot]?.emoji ?? ''} ${r.categorie}',
-                      subtitle: '${fmtDate(r.date)}${r.remarque.isNotEmpty ? ' · ${r.remarque}' : ''}',
+                      emoji: secteurs[r.secteur]?.emoji ?? '💰',
+                      title: r.categorie,
+                      subtitle: '${fmtDate(r.date)} · ${secteurs[r.secteur]?.label ?? r.secteur} · ${lots[r.lot]?.label ?? r.lot}${r.remarque.isNotEmpty ? ' · ${r.remarque}' : ''}',
                       value: '+${fmtMAD(r.montant)}',
                       valueColor: AppColors.green2,
                       bgColor: AppColors.greenBg,

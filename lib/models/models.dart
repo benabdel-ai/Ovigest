@@ -2,6 +2,38 @@ import 'package:uuid/uuid.dart';
 
 const _uuid = Uuid();
 
+// ─── Secteurs (activités de la ferme) ────────────────────────────────────────
+class SecteurInfo {
+  final String label;
+  final String emoji;
+  const SecteurInfo({required this.label, required this.emoji});
+}
+
+const Map<String, SecteurInfo> secteurs = {
+  'ovins':   SecteurInfo(label: 'Ovins',   emoji: '🐑'),
+  'olivier': SecteurInfo(label: 'Olivier', emoji: '🫒'),
+  'figuier': SecteurInfo(label: 'Figuier', emoji: '🍃'),
+  'ferme1':  SecteurInfo(label: 'Ferme 1', emoji: '🌾'),
+  'ferme2':  SecteurInfo(label: 'Ferme 2', emoji: '🏡'),
+};
+
+const Map<String, List<String>> depCategoriesBySecteur = {
+  'ovins':   ['Alimentation', "Main-d'œuvre", 'Vétérinaire', 'Transport', 'Achat bétail', 'Équipement', 'Location', 'Autre'],
+  'olivier': ['Récolte', 'Taille', 'Traitement phyto', "Main-d'œuvre", 'Transport', 'Équipement', 'Irrigation', 'Autre'],
+  'figuier': ['Récolte', 'Taille', 'Traitement phyto', "Main-d'œuvre", 'Transport', 'Autre'],
+  'ferme1':  ["Main-d'œuvre", 'Irrigation', 'Équipement', 'Semences', 'Engrais', 'Transport', 'Autre'],
+  'ferme2':  ["Main-d'œuvre", 'Irrigation', 'Équipement', 'Semences', 'Engrais', 'Transport', 'Autre'],
+};
+
+const Map<String, List<String>> revCategoriesBySecteur = {
+  'ovins':   ['Vente brebis', 'Vente bélier', 'Vente agneau ♂', 'Vente agneau ♀', 'Vente lot Aïd', 'Autre'],
+  'olivier': ["Vente huile d'olive", 'Vente olives', 'Autre'],
+  'figuier': ['Vente figues fraîches', 'Vente figues sèches', 'Autre'],
+  'ferme1':  ['Vente récolte', 'Location', 'Subvention', 'Autre'],
+  'ferme2':  ['Vente récolte', 'Location', 'Subvention', 'Autre'],
+};
+
+// ─── Lots (associations) ──────────────────────────────────────────────────────
 class LotInfo {
   final String label;
   final String emoji;
@@ -147,6 +179,7 @@ class Depense {
   final String categorie;
   final String remarque;
   final String lot;
+  final String secteur;
 
   Depense({
     String? id,
@@ -155,6 +188,7 @@ class Depense {
     required this.categorie,
     this.remarque = '',
     this.lot = 'abdel_fidaoui',
+    this.secteur = 'ovins',
   }) : id = id ?? _uuid.v4();
 
   Map<String, dynamic> toMap() => {
@@ -164,6 +198,7 @@ class Depense {
         'categorie': categorie,
         'remarque': remarque,
         'lot': lot,
+        'secteur': secteur,
       };
 
   factory Depense.fromMap(Map<String, dynamic> map) => Depense(
@@ -173,6 +208,7 @@ class Depense {
         categorie: (map['categorie'] ?? '') as String,
         remarque: (map['remarque'] ?? '') as String,
         lot: (map['lot'] ?? 'abdel_fidaoui') as String,
+        secteur: (map['secteur'] ?? 'ovins') as String,
       );
 }
 
@@ -183,6 +219,7 @@ class Revenu {
   final String categorie;
   final String remarque;
   final String lot;
+  final String secteur;
 
   Revenu({
     String? id,
@@ -191,6 +228,7 @@ class Revenu {
     required this.categorie,
     this.remarque = '',
     this.lot = 'abdel_fidaoui',
+    this.secteur = 'ovins',
   }) : id = id ?? _uuid.v4();
 
   Map<String, dynamic> toMap() => {
@@ -200,6 +238,7 @@ class Revenu {
         'categorie': categorie,
         'remarque': remarque,
         'lot': lot,
+        'secteur': secteur,
       };
 
   factory Revenu.fromMap(Map<String, dynamic> map) => Revenu(
@@ -209,6 +248,7 @@ class Revenu {
         categorie: (map['categorie'] ?? '') as String,
         remarque: (map['remarque'] ?? '') as String,
         lot: (map['lot'] ?? 'abdel_fidaoui') as String,
+        secteur: (map['secteur'] ?? 'ovins') as String,
       );
 }
 

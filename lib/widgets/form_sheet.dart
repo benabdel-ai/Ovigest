@@ -178,12 +178,22 @@ class _DepFormState extends State<_DepForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   double _montant = 0;
   DateTime _date = DateTime.now();
-  String _categorie = depCategories.first;
+  String _secteur = 'ovins';
+  String _categorie = depCategoriesBySecteur['ovins']!.first;
   String _rem = '';
   String _lot = 'abdel_fidaoui';
 
+  void _onSecteurChanged(String? value) {
+    final s = value ?? _secteur;
+    setState(() {
+      _secteur = s;
+      _categorie = depCategoriesBySecteur[s]!.first;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final cats = depCategoriesBySecteur[_secteur]!;
     return _Sheet(
       title: '💸 Ajouter une dépense',
       child: Form(
@@ -222,6 +232,25 @@ class _DepFormState extends State<_DepForm> {
               ],
             ),
             const SizedBox(height: 14),
+            _label('Activité'),
+            _dropdown<String>(
+              secteurs.entries
+                  .map((e) => DropdownMenuItem<String>(
+                        value: e.key,
+                        child: Text('${e.value.emoji} ${e.value.label}'),
+                      ))
+                  .toList(),
+              _secteur,
+              _onSecteurChanged,
+            ),
+            const SizedBox(height: 14),
+            _label('Catégorie'),
+            _dropdown<String>(
+              cats.map((cat) => DropdownMenuItem<String>(value: cat, child: Text(cat))).toList(),
+              _categorie,
+              (value) => setState(() => _categorie = value ?? _categorie),
+            ),
+            const SizedBox(height: 14),
             _label('Lot / Associé'),
             _dropdown<String>(
               lots.entries
@@ -232,15 +261,6 @@ class _DepFormState extends State<_DepForm> {
                   .toList(),
               _lot,
               (value) => setState(() => _lot = value ?? _lot),
-            ),
-            const SizedBox(height: 14),
-            _label('Catégorie'),
-            _dropdown<String>(
-              depCategories
-                  .map((cat) => DropdownMenuItem<String>(value: cat, child: Text(cat)))
-                  .toList(),
-              _categorie,
-              (value) => setState(() => _categorie = value ?? _categorie),
             ),
             const SizedBox(height: 14),
             _label('Remarque'),
@@ -268,7 +288,7 @@ class _DepFormState extends State<_DepForm> {
     _formKey.currentState!.save();
 
     await context.read<AppProvider>().addDepense(
-          Depense(montant: _montant, date: _date, categorie: _categorie, remarque: _rem, lot: _lot),
+          Depense(montant: _montant, date: _date, categorie: _categorie, remarque: _rem, lot: _lot, secteur: _secteur),
         );
 
     if (!mounted) return;
@@ -299,12 +319,22 @@ class _RevFormState extends State<_RevForm> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
   double _montant = 0;
   DateTime _date = DateTime.now();
-  String _categorie = revCategories.first;
+  String _secteur = 'ovins';
+  String _categorie = revCategoriesBySecteur['ovins']!.first;
   String _rem = '';
   String _lot = 'abdel_fidaoui';
 
+  void _onSecteurChanged(String? value) {
+    final s = value ?? _secteur;
+    setState(() {
+      _secteur = s;
+      _categorie = revCategoriesBySecteur[s]!.first;
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
+    final cats = revCategoriesBySecteur[_secteur]!;
     return _Sheet(
       title: '💰 Ajouter un revenu',
       child: Form(
@@ -343,6 +373,25 @@ class _RevFormState extends State<_RevForm> {
               ],
             ),
             const SizedBox(height: 14),
+            _label('Activité'),
+            _dropdown<String>(
+              secteurs.entries
+                  .map((e) => DropdownMenuItem<String>(
+                        value: e.key,
+                        child: Text('${e.value.emoji} ${e.value.label}'),
+                      ))
+                  .toList(),
+              _secteur,
+              _onSecteurChanged,
+            ),
+            const SizedBox(height: 14),
+            _label('Catégorie'),
+            _dropdown<String>(
+              cats.map((cat) => DropdownMenuItem<String>(value: cat, child: Text(cat))).toList(),
+              _categorie,
+              (value) => setState(() => _categorie = value ?? _categorie),
+            ),
+            const SizedBox(height: 14),
             _label('Lot / Associé'),
             _dropdown<String>(
               lots.entries
@@ -353,15 +402,6 @@ class _RevFormState extends State<_RevForm> {
                   .toList(),
               _lot,
               (value) => setState(() => _lot = value ?? _lot),
-            ),
-            const SizedBox(height: 14),
-            _label('Catégorie'),
-            _dropdown<String>(
-              revCategories
-                  .map((cat) => DropdownMenuItem<String>(value: cat, child: Text(cat)))
-                  .toList(),
-              _categorie,
-              (value) => setState(() => _categorie = value ?? _categorie),
             ),
             const SizedBox(height: 14),
             _label('Remarque'),
@@ -389,7 +429,7 @@ class _RevFormState extends State<_RevForm> {
     _formKey.currentState!.save();
 
     await context.read<AppProvider>().addRevenu(
-          Revenu(montant: _montant, date: _date, categorie: _categorie, remarque: _rem, lot: _lot),
+          Revenu(montant: _montant, date: _date, categorie: _categorie, remarque: _rem, lot: _lot, secteur: _secteur),
         );
 
     if (!mounted) return;
